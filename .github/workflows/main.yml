@@ -1,0 +1,50 @@
+name: Download Mailcow Images
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull mailcow images
+        run: |
+          docker pull ghcr.io/mailcow/nginx:1.06
+          docker pull ghcr.io/mailcow/phpfpm:8.2.29-2
+          docker pull ghcr.io/mailcow/rspamd:3.14.3-1
+          docker pull ghcr.io/mailcow/postfix:3.7.11-2
+          docker pull ghcr.io/mailcow/dovecot:2.3.21.1-2
+          docker pull ghcr.io/mailcow/sogo:5.12.5-3
+          docker pull ghcr.io/mailcow/unbound:1.25
+          docker pull ghcr.io/mailcow/clamd:1.71
+          docker pull ghcr.io/mailcow/acme:1.97
+          docker pull ghcr.io/mailcow/watchdog:2.11
+          docker pull ghcr.io/mailcow/dockerapi:2.12
+          docker pull ghcr.io/mailcow/netfilter:1.64
+          docker pull ghcr.io/mailcow/olefy:1.15
+          docker pull ghcr.io/mailcow/postfix-tlspol:1.8.23          
+      
+      - name: Save images to tar
+        run: |
+          docker save -o mailcow-images.tar \
+            ghcr.io/mailcow/nginx:1.06 \
+            ghcr.io/mailcow/phpfpm:8.2.29-2 \
+            ghcr.io/mailcow/rspamd:3.14.3-1 \
+            ghcr.io/mailcow/postfix:3.7.11-2 \
+            ghcr.io/mailcow/dovecot:2.3.21.1-2 \
+            ghcr.io/mailcow/sogo:5.12.5-3 \
+            ghcr.io/mailcow/unbound:1.25 \
+            ghcr.io/mailcow/clamd:1.71 \
+            ghcr.io/mailcow/acme:1.97 \
+            ghcr.io/mailcow/watchdog:2.11 \
+            ghcr.io/mailcow/dockerapi:2.12 \
+            ghcr.io/mailcow/netfilter:1.64 \
+            ghcr.io/mailcow/olefy:1.15 \
+            ghcr.io/mailcow/postfix-tlspol:1.8.23          
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mailcow-images
+          path: mailcow-images.tar
+          retention-days: 1
