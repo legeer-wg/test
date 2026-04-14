@@ -1,0 +1,26 @@
+name: Download FRP
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download FRP
+        run: |
+          FRP_VERSION="0.61.1"
+          wget https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/frp_${FRP_VERSION}_linux_amd64.tar.gz
+          tar -xzf frp_${FRP_VERSION}_linux_amd64.tar.gz
+          mv frp_${FRP_VERSION}_linux_amd64 frp
+      
+      - name: Create archive
+        run: |
+          zip -r frp-linux-amd64.zip frp/
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frp-linux-amd64
+          path: frp-linux-amd64.zip
+          retention-days: 1
