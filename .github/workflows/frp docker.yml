@@ -1,0 +1,36 @@
+name: Download FRP for Container
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'FRP version'
+        required: false
+        default: '0.61.1'
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download FRP
+        run: |
+          VERSION="${{ github.event.inputs.version || '0.61.1' }}"
+          echo "Downloading FRP version: $VERSION"
+          wget -q https://github.com/fatedier/frp/releases/download/v${VERSION}/frp_${VERSION}_linux_amd64.tar.gz
+          tar -xzf frp_${VERSION}_linux_amd64.tar.gz
+          mv frp_${VERSION}_linux_amd64 frp
+          ls -la frp/
+      
+      - name: Create archive
+        run: |
+          cd frp
+          zip -q ../frp-container.zip frpc frps *.toml
+          cd ..
+          ls -la frp-container.zip
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frp-container
+          path: frp-container.zip
+          retention-days: 1
